@@ -1,0 +1,10 @@
+services:
+  web:
+    image: cosmtrek/air
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    working_dir: /chi-no-wadachi
+    volumes:
+      - .:/chi-no-wadachi       
