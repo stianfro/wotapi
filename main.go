@@ -36,6 +36,7 @@ func main() {
 	r.Use(httplog.RequestLogger(logger))
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.Heartbeat("/ping"))
 
 	server := &http.Server{
 		Addr:              ":" + os.Getenv("PORT"),
