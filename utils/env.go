@@ -46,8 +46,9 @@ func loadEnv(fileName string) error {
 
 // SetEnv loads environment variables from a file if ENVFILE is set
 func SetEnv() {
-	if os.Getenv("ENVFILE") != "" {
-		if err := loadEnv(".env.test"); err != nil {
+	envFile := os.Getenv("ENVFILE")
+	if envFile != "" {
+		if err := loadEnv(envFile); err != nil {
 			log.Error().
 				Err(err).
 				Msg("Failed to load environment variables from file")
