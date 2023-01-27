@@ -10,5 +10,26 @@
         "version": "1.0.0"
     },
     "basePath": "/api/v1",
-    "paths": {}
+    "paths": {
+        "/healthz": {
+            "get": {
+                "description": "simple health check handler that returns 200 OK and is used for Kubernetes liveness probes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

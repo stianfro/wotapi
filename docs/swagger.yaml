@@ -7,5 +7,19 @@ info:
     name: MIT
   title: Chi No Wadachi API
   version: 1.0.0
-paths: {}
+paths:
+  /healthz:
+    get:
+      description: simple health check handler that returns 200 OK and is used for
+        Kubernetes liveness probes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Health Check
+      tags:
+      - health
 swagger: "2.0"
