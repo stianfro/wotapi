@@ -36,6 +36,11 @@ func loadEnv(fileName string) error {
 		}
 	}
 
+	if err := file.Close(); err != nil {
+		log.Error().
+			Msg("Failed to close file")
+	}
+
 	return scanner.Err()
 }
 
