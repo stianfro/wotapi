@@ -13,6 +13,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httplog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -22,11 +23,18 @@ import (
 // @license.name MIT
 // @BasePath /api/v1
 func main() {
+	// Environment
 	utils.SetEnv()
 
+	// Logger
+	logger := httplog.NewLogger("chi-no-wadachi", httplog.Options{
+		JSON: true,
+	})
+
+	// Service
 	r := chi.NewRouter()
+	r.Use(httplog.RequestLogger(logger))
 	r.Use(middleware.RequestID)
-	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
 	server := &http.Server{
