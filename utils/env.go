@@ -18,10 +18,6 @@ func loadEnv(fileName string) error {
 			Msg("Failed to open file")
 		return err
 	}
-	if err := file.Close(); err != nil {
-		log.Error().
-			Msg("Failed to close file")
-	}
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
