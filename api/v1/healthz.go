@@ -6,7 +6,13 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// HealthZ is a simple health check handler that returns 200 OK and is used for Kubernetes liveness probes
+// HealthZ godoc
+// @Summary		  Health Check
+// @Description simple health check handler that returns 200 OK and is used for Kubernetes liveness probes
+// @Tags        health
+// @Produce     json
+// @Success     200 {string} HealthZ
+// @Router      /healthz [get]
 func HealthZ(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 
