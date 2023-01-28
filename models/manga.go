@@ -24,7 +24,7 @@ type Manga struct {
 // Volume is a struct that represents a volume of a manga
 type Volume struct {
 	// ID is the volume ID used to make it unique in the database
-	ID int `json:"id"`
+	ID string `json:"id"`
 
 	// MangaID is the manga ID that the volume belongs to
 	MangaID string `json:"mangaID"`
@@ -48,10 +48,10 @@ type Volume struct {
 // Chapter is a struct that represents a chapter of a manga
 type Chapter struct {
 	// ID is the chapter ID used to make it unique in the database
-	ID int `json:"id"`
+	ID string `json:"id"`
 
 	// VolumeID is the volume ID that the chapter belongs to
-	VolumeID int `json:"volumeID"`
+	VolumeID string `json:"volumeID"`
 
 	// Number is the chapter number
 	Number int `json:"number"`
