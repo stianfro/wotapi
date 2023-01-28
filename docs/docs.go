@@ -41,28 +41,22 @@ const docTemplate = `{
         },
         "/manga": {
             "get": {
-                "description": "Gets a manga from the database",
+                "description": "Lists all manga in the database",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "manga"
                 ],
-                "summary": "Get a manga",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Manga ID",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
+                "summary": "List all manga",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Manga"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Manga"
+                            }
                         }
                     }
                 }
@@ -99,9 +93,93 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/manga/volume": {
+            "post": {
+                "description": "Creates a volume in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "volume"
+                ],
+                "summary": "Create a volume",
+                "parameters": [
+                    {
+                        "description": "Volume",
+                        "name": "volume",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Volume"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Volume"
+                        }
+                    }
+                }
+            }
+        },
+        "/manga/{id}": {
+            "get": {
+                "description": "Gets a manga from the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "manga"
+                ],
+                "summary": "Get a manga",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Manga ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Manga"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "models.Chapter": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "ID is the chapter ID used to make it unique in the database",
+                    "type": "string"
+                },
+                "number": {
+                    "description": "Number is the chapter number",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "Title is the title of the chapter",
+                    "type": "string"
+                },
+                "volumeID": {
+                    "description": "VolumeID is the volume ID that the chapter belongs to",
+                    "type": "string"
+                }
+            }
+        },
         "models.Manga": {
             "type": "object",
             "required": [
@@ -129,6 +207,49 @@ const docTemplate = `{
                 },
                 "title": {
                     "description": "Title is the title of the manga",
+                    "type": "string"
+                },
+                "volumes": {
+                    "description": "Volumes is a slice of volumes",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Volume"
+                    }
+                }
+            }
+        },
+        "models.Volume": {
+            "type": "object",
+            "properties": {
+                "chapters": {
+                    "description": "Chapters is a slice of chapters",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Chapter"
+                    }
+                },
+                "id": {
+                    "description": "ID is the volume ID used to make it unique in the database",
+                    "type": "string"
+                },
+                "isbn": {
+                    "description": "ISBN is the International Standard Book Number",
+                    "type": "string"
+                },
+                "mangaID": {
+                    "description": "MangaID is the manga ID that the volume belongs to",
+                    "type": "string"
+                },
+                "number": {
+                    "description": "Number is the volume number",
+                    "type": "integer"
+                },
+                "releaseDate": {
+                    "description": "ReleaseDate is the date the volume was released",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Title is the title of the volume",
                     "type": "string"
                 }
             }

@@ -1,5 +1,20 @@
 basePath: /api/v1
 definitions:
+  models.Chapter:
+    properties:
+      id:
+        description: ID is the chapter ID used to make it unique in the database
+        type: string
+      number:
+        description: Number is the chapter number
+        type: integer
+      title:
+        description: Title is the title of the chapter
+        type: string
+      volumeID:
+        description: VolumeID is the volume ID that the chapter belongs to
+        type: string
+    type: object
   models.Manga:
     properties:
       author:
@@ -17,11 +32,42 @@ definitions:
       title:
         description: Title is the title of the manga
         type: string
+      volumes:
+        description: Volumes is a slice of volumes
+        items:
+          $ref: '#/definitions/models.Volume'
+        type: array
     required:
     - author
     - magazine
     - publisher
     - title
+    type: object
+  models.Volume:
+    properties:
+      chapters:
+        description: Chapters is a slice of chapters
+        items:
+          $ref: '#/definitions/models.Chapter'
+        type: array
+      id:
+        description: ID is the volume ID used to make it unique in the database
+        type: string
+      isbn:
+        description: ISBN is the International Standard Book Number
+        type: string
+      mangaID:
+        description: MangaID is the manga ID that the volume belongs to
+        type: string
+      number:
+        description: Number is the volume number
+        type: integer
+      releaseDate:
+        description: ReleaseDate is the date the volume was released
+        type: string
+      title:
+        description: Title is the title of the volume
+        type: string
     type: object
 info:
   contact: {}
@@ -48,21 +94,17 @@ paths:
       - health
   /manga:
     get:
-      description: Gets a manga from the database
-      parameters:
-      - description: Manga ID
-        in: query
-        name: id
-        required: true
-        type: string
+      description: Lists all manga in the database
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Manga'
-      summary: Get a manga
+            items:
+              $ref: '#/definitions/models.Manga'
+            type: array
+      summary: List all manga
       tags:
       - manga
     post:
@@ -86,4 +128,45 @@ paths:
       summary: Create a manga
       tags:
       - manga
+  /manga/{id}:
+    get:
+      description: Gets a manga from the database
+      parameters:
+      - description: Manga ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Manga'
+      summary: Get a manga
+      tags:
+      - manga
+  /manga/volume:
+    post:
+      consumes:
+      - application/json
+      description: Creates a volume in the database
+      parameters:
+      - description: Volume
+        in: body
+        name: volume
+        required: true
+        schema:
+          $ref: '#/definitions/models.Volume'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Volume'
+      summary: Create a volume
+      tags:
+      - volume
 swagger: "2.0"
