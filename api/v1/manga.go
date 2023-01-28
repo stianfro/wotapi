@@ -175,3 +175,64 @@ func GetManga(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+// CreateVolume godoc
+// @Summary Create a volume
+// @Description Creates a volume in the database
+// @Tags volume
+// @Accept json
+// @Produce json
+// @Param volume body models.Volume true "Volume"
+// @Success 201 {object} models.Volume
+// @Router /manga/volume [post]
+func CreateVolume(w http.ResponseWriter, r *http.Request) {
+	var volume models.Volume
+
+	w.Header().Set("Content-Type", "application/json")
+
+	err := json.NewDecoder(r.Body).Decode(&volume)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed to decode JSON body")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	uuid, err := utils.NewUUID()
+	if err != nil {
+		log.Error().
+			Msg("Failed to generate UUID")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	volume.ID = uuid
+
+	db, err := utils.InitDB()
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed to initialize database")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	stmt, err := db.Prepare(`INSERT INTO mangaVolumes (id, mangaID, number, title, releaseDate, isbn) VALUES (?,?,?,?,?,?)`)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed to prepare statement")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	_, err = stmt.Exec(volume.ID, volume.MangaID, volume.Number, volume.Title, volume.ReleaseDate, volume.ISBN)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed to execute statement")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+}
