@@ -55,6 +55,7 @@ func main() {
 		httpSwagger.URL(server.Addr+"/swagger/doc.json"),
 	))
 	r.Get("/api/v1/healthz", v1.HealthZ)
+	r.Post("/api/v1/manga", v1.CreateManga)
 
 	err := server.ListenAndServe()
 	if err != nil {

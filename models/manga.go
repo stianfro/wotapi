@@ -3,19 +3,22 @@ package models
 // Manga is a struct that represents a manga
 type Manga struct {
 	// ID is the manga ID used to make it unique in the database
-	ID int `json:"id"`
+	ID string `json:"id"`
 
 	// Title is the title of the manga
-	Title string `json:"title"`
+	Title string `json:"title" binding:"required"`
 
 	// Author is the author of the manga
-	Author string `json:"author"`
+	Author string `json:"author" binding:"required"`
 
 	// Magazine is the magazine the manga was published in
-	Magazine string `json:"magazine"`
+	Magazine string `json:"magazine" binding:"required"`
+
+	// Publisher is the publisher of the manga
+	Publisher string `json:"publisher" binding:"required"`
 
 	// Volumes is a slice of volumes
-	Volumes []Volume `json:"volumes"`
+	// Volumes []Volume `json:"volumes"`
 }
 
 // Volume is a struct that represents a volume of a manga
