@@ -56,6 +56,8 @@ func main() {
 	))
 	r.Get("/api/v1/healthz", v1.HealthZ)
 	r.Post("/api/v1/manga", v1.CreateManga)
+	r.Get("/api/v1/manga", v1.ListManga)
+	r.Get("/api/v1/manga/*", v1.GetManga)
 
 	err := server.ListenAndServe()
 	if err != nil {
