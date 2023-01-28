@@ -5,9 +5,13 @@ import (
 	"fmt"
 )
 
+const (
+	octets = 16
+)
+
 // NewUUID generates a UUID
 func NewUUID() (string, error) {
-	uuid := make([]byte, 16)
+	uuid := make([]byte, octets)
 	n, err := rand.Read(uuid)
 	if n != len(uuid) || err != nil {
 		return "", err
