@@ -41,22 +41,28 @@ const docTemplate = `{
         },
         "/manga": {
             "get": {
-                "description": "Lists all manga in the database",
+                "description": "Gets a manga from the database",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "manga"
                 ],
-                "summary": "List all manga",
+                "summary": "Get a manga",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Manga ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Manga"
-                            }
+                            "$ref": "#/definitions/models.Manga"
                         }
                     }
                 }
