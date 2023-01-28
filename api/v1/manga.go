@@ -130,9 +130,9 @@ func ListManga(w http.ResponseWriter, r *http.Request) {
 // @Description Gets a manga from the database
 // @Tags manga
 // @Produce json
-// @Param id query string true "Manga ID"
+// @Param id path string true "Manga ID"
 // @Success 200 {object} models.Manga
-// @Router /manga [get]
+// @Router /manga/{id} [get]
 func GetManga(w http.ResponseWriter, r *http.Request) {
 	var manga models.Manga
 
@@ -156,7 +156,8 @@ func GetManga(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = stmt.QueryRow(r.URL.Query().Get("id")).Scan(&manga.ID, &manga.Title, &manga.Author, &manga.Magazine, &manga.Publisher)
+	id := r.URL.Path[len("/api/v1/manga/"):]
+	err = stmt.QueryRow(id).Scan(&manga.ID, &manga.Title, &manga.Author, &manga.Magazine, &manga.Publisher)
 	if err != nil {
 		log.Error().
 			Err(err).
