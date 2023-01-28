@@ -18,13 +18,16 @@ type Manga struct {
 	Publisher string `json:"publisher" binding:"required"`
 
 	// Volumes is a slice of volumes
-	// Volumes []Volume `json:"volumes"`
+	Volumes []Volume `json:"volumes"`
 }
 
 // Volume is a struct that represents a volume of a manga
 type Volume struct {
 	// ID is the volume ID used to make it unique in the database
 	ID int `json:"id"`
+
+	// MangaID is the manga ID that the volume belongs to
+	MangaID string `json:"mangaID"`
 
 	// Number is the volume number
 	Number int `json:"number"`
@@ -33,7 +36,7 @@ type Volume struct {
 	Title string `json:"title"`
 
 	// ReleaseDate is the date the volume was released
-	Release string `json:"releaseDate"`
+	ReleaseDate string `json:"releaseDate"`
 
 	// ISBN is the International Standard Book Number
 	ISBN string `json:"isbn"`
@@ -46,6 +49,9 @@ type Volume struct {
 type Chapter struct {
 	// ID is the chapter ID used to make it unique in the database
 	ID int `json:"id"`
+
+	// VolumeID is the volume ID that the chapter belongs to
+	VolumeID int `json:"volumeID"`
 
 	// Number is the chapter number
 	Number int `json:"number"`
