@@ -11,6 +11,61 @@
     },
     "basePath": "/api/v1",
     "paths": {
+        "/api/v1/manga": {
+            "get": {
+                "description": "Lists all manga in the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "manga"
+                ],
+                "summary": "List all manga",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Manga"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a manga in the database",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "manga"
+                ],
+                "summary": "Create a manga",
+                "parameters": [
+                    {
+                        "description": "Manga",
+                        "name": "manga",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Manga"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Manga"
+                        }
+                    }
+                }
+            }
+        },
         "/healthz": {
             "get": {
                 "description": "simple health check handler that returns 200 OK and is used for Kubernetes liveness probes",
@@ -28,6 +83,39 @@
                             "type": "string"
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Manga": {
+            "type": "object",
+            "required": [
+                "author",
+                "magazine",
+                "publisher",
+                "title"
+            ],
+            "properties": {
+                "author": {
+                    "description": "Author is the author of the manga",
+                    "type": "string"
+                },
+                "id": {
+                    "description": "ID is the manga ID used to make it unique in the database",
+                    "type": "string"
+                },
+                "magazine": {
+                    "description": "Magazine is the magazine the manga was published in",
+                    "type": "string"
+                },
+                "publisher": {
+                    "description": "Publisher is the publisher of the manga",
+                    "type": "string"
+                },
+                "title": {
+                    "description": "Title is the title of the manga",
+                    "type": "string"
                 }
             }
         }
