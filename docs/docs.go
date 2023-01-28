@@ -19,7 +19,27 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/manga": {
+        "/healthz": {
+            "get": {
+                "description": "simple health check handler that returns 200 OK and is used for Kubernetes liveness probes",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/manga": {
             "get": {
                 "description": "Lists all manga in the database",
                 "produces": [
@@ -69,26 +89,6 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.Manga"
-                        }
-                    }
-                }
-            }
-        },
-        "/healthz": {
-            "get": {
-                "description": "simple health check handler that returns 200 OK and is used for Kubernetes liveness probes",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "health"
-                ],
-                "summary": "Health Check",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
                         }
                     }
                 }

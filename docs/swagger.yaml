@@ -32,7 +32,21 @@ info:
   title: Chi No Wadachi API
   version: 1.0.0
 paths:
-  /api/v1/manga:
+  /healthz:
+    get:
+      description: simple health check handler that returns 200 OK and is used for
+        Kubernetes liveness probes
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Health Check
+      tags:
+      - health
+  /manga:
     get:
       description: Lists all manga in the database
       produces:
@@ -68,18 +82,4 @@ paths:
       summary: Create a manga
       tags:
       - manga
-  /healthz:
-    get:
-      description: simple health check handler that returns 200 OK and is used for
-        Kubernetes liveness probes
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            type: string
-      summary: Health Check
-      tags:
-      - health
 swagger: "2.0"
