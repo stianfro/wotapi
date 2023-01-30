@@ -58,7 +58,7 @@ func main() {
 
 	r.Post("/api/v1/manga", v1.CreateManga)
 	r.Get("/api/v1/manga", v1.ListManga)
-	r.Get("/api/v1/manga/*", v1.GetManga)
+	r.Get("/api/v1/manga/{id}", v1.GetManga)
 
 	r.Post("/api/v1/manga/volume", v1.CreateVolume)
 
