@@ -20,8 +20,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// @title Chi No Wadachi API
-// @description This is a simple API that is used to demonstrate how to use Chi as a web framework.
+// @title WotAPI
+// @description  An API that helps you track your hobbies.
 // @version 1.0.0
 // @license.name MIT
 // @BasePath /api/v1
