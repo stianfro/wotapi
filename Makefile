@@ -52,3 +52,7 @@ run/docker:
 
 get/health:
 	http http://localhost:${PORT}/api/v1/healthz
+get/manga:
+	http http://localhost:${PORT}/api/v1/manga
+get/volume:
+	http http://localhost:${PORT}/api/v1/manga/volume
