@@ -37,11 +37,6 @@ definitions:
         items:
           $ref: '#/definitions/models.Volume'
         type: array
-    required:
-    - author
-    - magazine
-    - publisher
-    - title
     type: object
   models.Volume:
     properties:
@@ -104,6 +99,10 @@ paths:
             items:
               $ref: '#/definitions/models.Manga'
             type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
       summary: List all manga
       tags:
       - manga
@@ -125,6 +124,10 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.Manga'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
       summary: Create a manga
       tags:
       - manga
@@ -144,10 +147,32 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Manga'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
       summary: Get a manga
       tags:
       - manga
   /manga/volume:
+    get:
+      description: Lists all volumes in the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Volume'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: List all volumes
+      tags:
+      - volume
     post:
       consumes:
       - application/json
@@ -166,7 +191,34 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/models.Volume'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
       summary: Create a volume
+      tags:
+      - volume
+  /manga/volume/{id}:
+    get:
+      description: Gets a volume from the database
+      parameters:
+      - description: Volume ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Volume'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get a volume by ID
       tags:
       - volume
 swagger: "2.0"
