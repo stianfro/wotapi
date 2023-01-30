@@ -58,6 +58,12 @@ const docTemplate = `{
                                 "$ref": "#/definitions/models.Manga"
                             }
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             },
@@ -90,11 +96,44 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.Manga"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
         },
         "/manga/volume": {
+            "get": {
+                "description": "Lists all volumes in the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "volume"
+                ],
+                "summary": "List all volumes",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Volume"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Creates a volume in the database",
                 "consumes": [
@@ -123,6 +162,47 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/models.Volume"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/manga/volume/{id}": {
+            "get": {
+                "description": "Gets a volume from the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "volume"
+                ],
+                "summary": "Get a volume by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Volume ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Volume"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -153,6 +233,12 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.Manga"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 }
             }
@@ -182,12 +268,6 @@ const docTemplate = `{
         },
         "models.Manga": {
             "type": "object",
-            "required": [
-                "author",
-                "magazine",
-                "publisher",
-                "title"
-            ],
             "properties": {
                 "author": {
                     "description": "Author is the author of the manga",
