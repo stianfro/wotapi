@@ -29,3 +29,4 @@ tmp/
 tmp/*
 
 .env.secret
+db.sqlite3

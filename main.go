@@ -14,6 +14,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httplog"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -23,20 +24,26 @@ import (
 // @license.name MIT
 // @BasePath /api/v1
 func main() {
-	// Environment
-	utils.SetEnv()
-
-	// Logger
-	logger := httplog.NewLogger("chi-no-wadachi", httplog.Options{
-		JSON: true,
-	})
-
 	// Service
 	r := chi.NewRouter()
-	r.Use(httplog.RequestLogger(logger))
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Heartbeat("/ping"))
+
+	if os.Getenv("ENV") == "development" {
+		// Human readable logs
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		r.Use(middleware.Logger)
+	} else {
+		// JSON logs
+		logger := httplog.NewLogger("chi-no-wadachi", httplog.Options{
+			JSON: true,
+		})
+		r.Use(httplog.RequestLogger(logger))
+	}
+
+	// Environment
+	utils.SetEnv()
 
 	server := &http.Server{
 		Addr:              ":" + os.Getenv("PORT"),
@@ -48,6 +55,12 @@ func main() {
 		httpSwagger.URL(server.Addr+"/swagger/doc.json"),
 	))
 	r.Get("/api/v1/healthz", v1.HealthZ)
+
+	r.Post("/api/v1/manga", v1.CreateManga)
+	r.Get("/api/v1/manga", v1.ListManga)
+	r.Get("/api/v1/manga/{id}", v1.GetManga)
+
+	r.Post("/api/v1/manga/volume", v1.CreateVolume)
 
 	err := server.ListenAndServe()
 	if err != nil {
