@@ -7,6 +7,8 @@ import (
 
 	v1 "github.com/stianfro/wotapi/api/v1"
 	_ "github.com/stianfro/wotapi/docs"
+	"github.com/stianfro/wotapi/models"
+	"github.com/stianfro/wotapi/services"
 	utils "github.com/stianfro/wotapi/utils"
 
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -24,7 +26,24 @@ import (
 // @license.name MIT
 // @BasePath /api/v1
 func main() {
-	// Service
+	// Environment
+	utils.SetEnv()
+
+	// Database
+	db, err := utils.InitDB()
+	if err != nil {
+		log.Err(err).Msg("Failed to connect to database")
+	}
+
+	// Interface
+	mangastore := &models.MangaStore{DataBase: db}
+	service := &services.Service{MangaStore: mangastore}
+
+	// Server
+	webserver(v1.NewHTTPHandler(service))
+}
+
+func webserver(handler *v1.HTTPHandler) {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Recoverer)
@@ -42,9 +61,6 @@ func main() {
 		r.Use(httplog.RequestLogger(logger))
 	}
 
-	// Environment
-	utils.SetEnv()
-
 	server := &http.Server{
 		Addr:              ":" + os.Getenv("PORT"),
 		Handler:           r,
@@ -56,11 +72,15 @@ func main() {
 	))
 	r.Get("/api/v1/healthz", v1.HealthZ)
 
-	r.Post("/api/v1/manga", v1.CreateManga)
-	r.Get("/api/v1/manga", v1.ListManga)
-	r.Get("/api/v1/manga/{id}", v1.GetManga)
+	r.Route("/api/v1/manga", func(r chi.Router) {
+		r.Get("/", handler.ListManga)
+		r.Get("/{id}", handler.GetManga)
+		r.Post("/", handler.CreateManga)
 
-	r.Post("/api/v1/manga/volume", v1.CreateVolume)
+		r.Get("/volume", handler.ListVolume)
+		r.Get("/volume/{id}", handler.GetVolume)
+		r.Post("/volume", handler.CreateVolume)
+	})
 
 	err := server.ListenAndServe()
 	if err != nil {

@@ -9,118 +9,24 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/stianfro/wotapi/models"
-	"github.com/stianfro/wotapi/utils"
+	"github.com/stianfro/wotapi/services"
 )
 
-// CreateManga godoc
-// @Summary Create a manga
-// @Description Creates a manga in the database
-// @Tags manga
-// @Accept json
-// @Produce json
-// @Param manga body models.Manga true "Manga"
-// @Success 201 {object} models.Manga
-// @Router /manga [post]
-func CreateManga(w http.ResponseWriter, r *http.Request) {
-	var manga models.Manga
-
-	w.Header().Set("Content-Type", "application/json")
-
-	err := json.NewDecoder(r.Body).Decode(&manga)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to decode JSON body")
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	uuid, err := utils.NewUUID()
-	if err != nil {
-		log.Error().
-			Msg("Failed to generate UUID")
-		w.WriteHeader(http.StatusInternalServerError)
-	}
-	manga.ID = uuid
-
-	db, err := utils.InitDB()
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to initialize database")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	stmt, err := db.Prepare(`INSERT INTO manga (id, title, author, magazine, publisher) VALUES (?,?,?,?,?)`)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to prepare statement")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	_, err = stmt.Exec(manga.ID, manga.Title, manga.Author, manga.Magazine, manga.Publisher)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to execute statement")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
+// HTTPHandler is the HTTP handler for the API
+type HTTPHandler struct {
+	service *services.Service
 }
 
-// ListManga godoc
-// @Summary List all manga
-// @Description Lists all manga in the database
-// @Tags manga
-// @Produce json
-// @Success 200 {array} models.Manga
-// @Router /manga [get]
-func ListManga(w http.ResponseWriter, r *http.Request) {
-	var manga []models.Manga
+// NewHTTPHandler creates a new HTTPHandler with the given service
+func NewHTTPHandler(s *services.Service) *HTTPHandler {
+	return &HTTPHandler{service: s}
+}
 
+func writeJSON(w http.ResponseWriter, data interface{}, status int) {
 	w.Header().Set("Content-Type", "application/json")
-
-	db, err := utils.InitDB()
+	err := json.NewEncoder(w).Encode(data)
 	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to initialize database")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	rows, err := db.Query("SELECT * FROM manga")
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to query database")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	for rows.Next() {
-		var m models.Manga
-		err = rows.Scan(&m.ID, &m.Title, &m.Author, &m.Magazine, &m.Publisher)
-		if err != nil {
-			log.Error().
-				Err(err).
-				Msg("Failed to scan row")
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		manga = append(manga, m)
-	}
-
-	err = json.NewEncoder(w).Encode(manga)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to encode JSON")
-		w.WriteHeader(http.StatusInternalServerError)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), status)
 		return
 	}
 }
@@ -132,48 +38,120 @@ func ListManga(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param id path string true "Manga ID"
 // @Success 200 {object} models.Manga
+// @Failure 500 {object} string
 // @Router /manga/{id} [get]
-func GetManga(w http.ResponseWriter, r *http.Request) {
-	var manga models.Manga
-
-	w.Header().Set("Content-Type", "application/json")
-
-	db, err := utils.InitDB()
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to initialize database")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	stmt, err := db.Prepare("SELECT * FROM manga WHERE id=?")
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to prepare statement")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
+func (h *HTTPHandler) GetManga(w http.ResponseWriter, r *http.Request) {
 	id := r.URL.Path[len("/api/v1/manga/"):]
-	err = stmt.QueryRow(id).Scan(&manga.ID, &manga.Title, &manga.Author, &manga.Magazine, &manga.Publisher)
+
+	manga, err := h.service.GetManga(id)
 	if err != nil {
 		log.Error().
 			Err(err).
-			Msg("Failed to query database")
-		w.WriteHeader(http.StatusInternalServerError)
+			Msg("Failed to get manga")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(manga)
+	writeJSON(w, manga, http.StatusOK)
+}
+
+// ListManga godoc
+// @Summary List all manga
+// @Description Lists all manga in the database
+// @Tags manga
+// @Produce json
+// @Success 200 {array} models.Manga
+// @Failure 500 {object} string
+// @Router /manga [get]
+func (h *HTTPHandler) ListManga(w http.ResponseWriter, r *http.Request) {
+	manga, err := h.service.ListManga()
 	if err != nil {
 		log.Error().
 			Err(err).
-			Msg("Failed to encode JSON")
-		w.WriteHeader(http.StatusInternalServerError)
+			Msg("Failed to list manga")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	writeJSON(w, manga, http.StatusOK)
+}
+
+// CreateManga godoc
+// @Summary Create a manga
+// @Description Creates a manga in the database
+// @Tags manga
+// @Accept json
+// @Produce json
+// @Param manga body models.Manga true "Manga"
+// @Success 201 {object} models.Manga
+// @Failure 500 {object} string
+// @Router /manga [post]
+func (h *HTTPHandler) CreateManga(w http.ResponseWriter, r *http.Request) {
+	data := &models.Manga{}
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(data)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed to decode JSON body")
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	manga, err := h.service.CreateManga(data)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed to create manga")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSON(w, manga, http.StatusCreated)
+}
+
+// GetVolume godoc
+// @Summary Get a volume by ID
+// @Description Gets a volume from the database
+// @Tags volume
+// @Produce json
+// @Param id path string true "Volume ID"
+// @Success 200 {object} models.Volume
+// @Failure 500 {object} string
+// @Router /manga/volume/{id} [get]
+func (h *HTTPHandler) GetVolume(w http.ResponseWriter, r *http.Request) {
+	id := r.URL.Path[len("/api/v1/manga/volume/"):]
+
+	volume, err := h.service.GetVolume(id)
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed to get volume")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	writeJSON(w, volume, http.StatusOK)
+}
+
+// ListVolumes godoc
+// @Summary List all volumes
+// @Description Lists all volumes in the database
+// @Tags volume
+// @Produce json
+// @Success 200 {array} models.Volume
+// @Failure 500 {object} string
+// @Router /manga/volume [get]
+func (h *HTTPHandler) ListVolume(w http.ResponseWriter, r *http.Request) {
+	volumes, err := h.service.ListVolumes()
+	if err != nil {
+		log.Error().
+			Err(err).
+			Msg("Failed to list volumes")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	writeJSON(w, volumes, http.StatusOK)
 }
 
 // CreateVolume godoc
@@ -184,55 +162,28 @@ func GetManga(w http.ResponseWriter, r *http.Request) {
 // @Produce json
 // @Param volume body models.Volume true "Volume"
 // @Success 201 {object} models.Volume
+// @Failure 500 {object} string
 // @Router /manga/volume [post]
-func CreateVolume(w http.ResponseWriter, r *http.Request) {
-	var volume models.Volume
-
-	w.Header().Set("Content-Type", "application/json")
-
-	err := json.NewDecoder(r.Body).Decode(&volume)
+func (h *HTTPHandler) CreateVolume(w http.ResponseWriter, r *http.Request) {
+	data := &models.Volume{}
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(data)
 	if err != nil {
 		log.Error().
 			Err(err).
 			Msg("Failed to decode JSON body")
-		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	uuid, err := utils.NewUUID()
-	if err != nil {
-		log.Error().
-			Msg("Failed to generate UUID")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	volume.ID = uuid
-
-	db, err := utils.InitDB()
+	volume, err := h.service.CreateVolume(data)
 	if err != nil {
 		log.Error().
 			Err(err).
-			Msg("Failed to initialize database")
-		w.WriteHeader(http.StatusInternalServerError)
+			Msg("Failed to create volume")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	stmt, err := db.Prepare(`INSERT INTO mangaVolumes (id, mangaID, number, title, releaseDate, isbn) VALUES (?,?,?,?,?,?)`)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to prepare statement")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	_, err = stmt.Exec(volume.ID, volume.MangaID, volume.Number, volume.Title, volume.ReleaseDate, volume.ISBN)
-	if err != nil {
-		log.Error().
-			Err(err).
-			Msg("Failed to execute statement")
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
+	writeJSON(w, volume, http.StatusCreated)
 }
