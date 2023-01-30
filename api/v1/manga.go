@@ -8,8 +8,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 
 	"github.com/rs/zerolog/log"
-	"github.com/stianfro/chi-no-wadachi/models"
-	"github.com/stianfro/chi-no-wadachi/utils"
+	"github.com/stianfro/wotapi/models"
+	"github.com/stianfro/wotapi/utils"
 )
 
 // CreateManga godoc

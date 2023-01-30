@@ -5,9 +5,9 @@ import (
 	"os"
 	"time"
 
-	v1 "github.com/stianfro/chi-no-wadachi/api/v1"
-	_ "github.com/stianfro/chi-no-wadachi/docs"
-	utils "github.com/stianfro/chi-no-wadachi/utils"
+	v1 "github.com/stianfro/wotapi/api/v1"
+	_ "github.com/stianfro/wotapi/docs"
+	utils "github.com/stianfro/wotapi/utils"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 
@@ -36,7 +36,7 @@ func main() {
 		r.Use(middleware.Logger)
 	} else {
 		// JSON logs
-		logger := httplog.NewLogger("chi-no-wadachi", httplog.Options{
+		logger := httplog.NewLogger("wotapi", httplog.Options{
 			JSON: true,
 		})
 		r.Use(httplog.RequestLogger(logger))

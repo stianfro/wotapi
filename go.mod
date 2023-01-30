@@ -1,4 +1,4 @@
-module github.com/stianfro/chi-no-wadachi
+module github.com/stianfro/wotapi
 
 go 1.19
 
