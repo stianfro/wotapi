@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a simple API that is used to demonstrate how to use Chi as a web framework.",
-        "title": "Chi No Wadachi API",
+        "description": "An API that helps you track your hobbies.",
+        "title": "WotAPI",
         "contact": {},
         "license": {
             "name": "MIT"
@@ -99,33 +99,6 @@
             }
         },
         "/manga/volume": {
-            "get": {
-                "description": "Lists all volumes in the database",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "volume"
-                ],
-                "summary": "List all volumes",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Volume"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "Creates a volume in the database",
                 "consumes": [
@@ -165,7 +138,7 @@
                 }
             }
         },
-        "/manga/volume/{id}": {
+        "/manga/volume/{volumeID}": {
             "get": {
                 "description": "Gets a volume from the database",
                 "produces": [
@@ -179,7 +152,7 @@
                     {
                         "type": "string",
                         "description": "Volume ID",
-                        "name": "id",
+                        "name": "volumeID",
                         "in": "path",
                         "required": true
                     }
@@ -189,6 +162,43 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Volume"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/manga/volumes": {
+            "get": {
+                "description": "Lists all volumes in the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "volume"
+                ],
+                "summary": "List all volumes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Manga ID",
+                        "name": "mangaID",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Volume"
+                            }
                         }
                     },
                     "500": {
@@ -214,7 +224,7 @@
                     {
                         "type": "string",
                         "description": "Manga ID",
-                        "name": "id",
+                        "name": "mangaID",
                         "in": "path",
                         "required": true
                     }

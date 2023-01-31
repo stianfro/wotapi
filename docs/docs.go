@@ -107,33 +107,6 @@ const docTemplate = `{
             }
         },
         "/manga/volume": {
-            "get": {
-                "description": "Lists all volumes in the database",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "volume"
-                ],
-                "summary": "List all volumes",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Volume"
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            },
             "post": {
                 "description": "Creates a volume in the database",
                 "consumes": [
@@ -173,7 +146,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/manga/volume/{id}": {
+        "/manga/volume/{volumeID}": {
             "get": {
                 "description": "Gets a volume from the database",
                 "produces": [
@@ -187,7 +160,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Volume ID",
-                        "name": "id",
+                        "name": "volumeID",
                         "in": "path",
                         "required": true
                     }
@@ -197,6 +170,43 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/models.Volume"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/manga/volumes": {
+            "get": {
+                "description": "Lists all volumes in the database",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "volume"
+                ],
+                "summary": "List all volumes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Manga ID",
+                        "name": "mangaID",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Volume"
+                            }
                         }
                     },
                     "500": {
@@ -222,7 +232,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Manga ID",
-                        "name": "id",
+                        "name": "mangaID",
                         "in": "path",
                         "required": true
                     }
@@ -343,8 +353,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
-	Title:            "Chi No Wadachi API",
-	Description:      "This is a simple API that is used to demonstrate how to use Chi as a web framework.",
+	Title:            "WotAPI",
+	Description:      "An API that helps you track your hobbies.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }
