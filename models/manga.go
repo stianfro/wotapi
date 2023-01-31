@@ -76,9 +76,9 @@ func NewMangaStore(db *sqlx.DB) *MangaStore {
 }
 
 // GetManga is a function that returns a manga by ID
-func (s *MangaStore) GetManga(id string) (Manga, error) {
+func (s *MangaStore) GetManga(mangaID string) (Manga, error) {
 	var manga Manga
-	err := s.DataBase.Get(&manga, "SELECT * FROM manga WHERE id = $1", id)
+	err := s.DataBase.Get(&manga, "SELECT * FROM manga WHERE id = $1", mangaID)
 	return manga, err
 }
 
@@ -100,17 +100,21 @@ func (s *MangaStore) CreateManga(manga *Manga) (*Manga, error) {
 	return manga, err
 }
 
-// GetVolume is a function that returns a volume of a manga by ID
-func (s *MangaStore) GetVolume(id string) (Volume, error) {
+// GetVolume is a function that returns a volume of a manga by ID and manga ID
+func (s *MangaStore) GetVolume(volumeID string) (Volume, error) {
 	var volume Volume
-	err := s.DataBase.Get(&volume, "SELECT * FROM mangaVolumes WHERE id = $1", id)
+	err := s.DataBase.Get(&volume, "SELECT * FROM mangaVolumes WHERE id = $1", volumeID)
 	return volume, err
 }
 
 // ListVolumes is a function that returns a list of all volumes of a manga
-func (s *MangaStore) ListVolumes() ([]Volume, error) {
+func (s *MangaStore) ListVolumes(mangaID string) ([]Volume, error) {
 	var volumes []Volume
-	err := s.DataBase.Select(&volumes, "SELECT * FROM mangaVolumes")
+	if mangaID == "" {
+		err := s.DataBase.Select(&volumes, "SELECT * FROM mangaVolumes")
+		return volumes, err
+	}
+	err := s.DataBase.Select(&volumes, "SELECT * FROM mangaVolumes WHERE mangaID = $1", mangaID)
 	return volumes, err
 }
 

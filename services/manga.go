@@ -13,8 +13,8 @@ func NewService(ms *models.MangaStore) *Service {
 }
 
 // GetManga implements the GetManga method of the MangaStore interface
-func (s *Service) GetManga(id string) (models.Manga, error) {
-	return s.MangaStore.GetManga(id)
+func (s *Service) GetManga(mangaID string) (models.Manga, error) {
+	return s.MangaStore.GetManga(mangaID)
 }
 
 // ListManga implements the ListManga method of the MangaStore interface
@@ -28,13 +28,13 @@ func (s *Service) CreateManga(manga *models.Manga) (*models.Manga, error) {
 }
 
 // GetVolume implements the GetVolume method of the MangaStore interface
-func (s *Service) GetVolume(id string) (models.Volume, error) {
-	return s.MangaStore.GetVolume(id)
+func (s *Service) GetVolume(volumeID string) (models.Volume, error) {
+	return s.MangaStore.GetVolume(volumeID)
 }
 
 // ListVolumes implements the ListVolumes method of the MangaStore interface
-func (s *Service) ListVolumes() ([]models.Volume, error) {
-	return s.MangaStore.ListVolumes()
+func (s *Service) ListVolumes(mangaID string) ([]models.Volume, error) {
+	return s.MangaStore.ListVolumes(mangaID)
 }
 
 // CreateVolume implements the CreateVolume method of the MangaStore interface

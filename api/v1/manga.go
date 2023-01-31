@@ -36,14 +36,14 @@ func writeJSON(w http.ResponseWriter, data interface{}, status int) {
 // @Description Gets a manga from the database
 // @Tags manga
 // @Produce json
-// @Param id path string true "Manga ID"
+// @Param mangaID path string true "Manga ID"
 // @Success 200 {object} models.Manga
 // @Failure 500 {object} string
 // @Router /manga/{id} [get]
 func (h *HTTPHandler) GetManga(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Path[len("/api/v1/manga/"):]
+	mangaID := r.URL.Path[len("/api/v1/manga/"):]
 
-	manga, err := h.service.GetManga(id)
+	manga, err := h.service.GetManga(mangaID)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -115,14 +115,13 @@ func (h *HTTPHandler) CreateManga(w http.ResponseWriter, r *http.Request) {
 // @Description Gets a volume from the database
 // @Tags volume
 // @Produce json
-// @Param id path string true "Volume ID"
+// @Param volumeID path string true "Volume ID"
 // @Success 200 {object} models.Volume
 // @Failure 500 {object} string
-// @Router /manga/volume/{id} [get]
+// @Router /manga/volume/{volumeID} [get]
 func (h *HTTPHandler) GetVolume(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Path[len("/api/v1/manga/volume/"):]
-
-	volume, err := h.service.GetVolume(id)
+	volumeID := r.URL.Path[len("/api/v1/manga/volume/"):]
+	volume, err := h.service.GetVolume(volumeID)
 	if err != nil {
 		log.Error().
 			Err(err).
@@ -139,11 +138,13 @@ func (h *HTTPHandler) GetVolume(w http.ResponseWriter, r *http.Request) {
 // @Description Lists all volumes in the database
 // @Tags volume
 // @Produce json
+// @Param mangaID query string false "Manga ID"
 // @Success 200 {array} models.Volume
 // @Failure 500 {object} string
-// @Router /manga/volume [get]
-func (h *HTTPHandler) ListVolume(w http.ResponseWriter, r *http.Request) {
-	volumes, err := h.service.ListVolumes()
+// @Router /manga/volumes [get]
+func (h *HTTPHandler) ListVolumes(w http.ResponseWriter, r *http.Request) {
+	mangaID := r.URL.Query().Get("mangaID")
+	volumes, err := h.service.ListVolumes(mangaID)
 	if err != nil {
 		log.Error().
 			Err(err).

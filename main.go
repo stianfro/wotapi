@@ -74,12 +74,12 @@ func webserver(handler *v1.HTTPHandler) {
 
 	r.Route("/api/v1/manga", func(r chi.Router) {
 		r.Get("/", handler.ListManga)
-		r.Get("/{id}", handler.GetManga)
+		r.Get("/{mangaID}", handler.GetManga)
 		r.Post("/", handler.CreateManga)
 
-		r.Get("/volume", handler.ListVolume)
-		r.Get("/volume/{id}", handler.GetVolume)
-		r.Post("/volume", handler.CreateVolume)
+		r.Get("/volumes", handler.ListVolumes)
+		r.Get("/volume/{volumeID}", handler.GetVolume)
+		r.Post("/{mangaID}/volume", handler.CreateVolume)
 	})
 
 	err := server.ListenAndServe()
