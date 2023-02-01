@@ -32,7 +32,7 @@ type Volume struct {
 	ID string `json:"id"`
 
 	// MangaID is the manga ID that the volume belongs to
-	MangaID string `json:"mangaID" db:"mangaID"`
+	MangaID string `json:"mangaID" db:"manga_id"`
 
 	// Number is the volume number
 	Number int `json:"number"`
@@ -41,7 +41,7 @@ type Volume struct {
 	Title string `json:"title"`
 
 	// ReleaseDate is the date the volume was released
-	ReleaseDate string `json:"releaseDate" db:"releaseDate"`
+	ReleaseDate string `json:"releaseDate" db:"release_date"`
 
 	// ISBN is the International Standard Book Number
 	ISBN string `json:"isbn"`
@@ -56,7 +56,7 @@ type Chapter struct {
 	ID string `json:"id"`
 
 	// VolumeID is the volume ID that the chapter belongs to
-	VolumeID string `json:"volumeID"`
+	VolumeID string `json:"volumeID" db:"volume_id"`
 
 	// Number is the chapter number
 	Number int `json:"number"`
@@ -103,7 +103,7 @@ func (s *MangaStore) CreateManga(manga *Manga) (*Manga, error) {
 // GetVolume is a function that returns a volume of a manga by ID and manga ID
 func (s *MangaStore) GetVolume(volumeID string) (Volume, error) {
 	var volume Volume
-	err := s.DataBase.Get(&volume, "SELECT * FROM mangaVolumes WHERE id = $1", volumeID)
+	err := s.DataBase.Get(&volume, "SELECT * FROM manga_volumes WHERE id = $1", volumeID)
 	return volume, err
 }
 
@@ -111,10 +111,10 @@ func (s *MangaStore) GetVolume(volumeID string) (Volume, error) {
 func (s *MangaStore) ListVolumes(mangaID string) ([]Volume, error) {
 	var volumes []Volume
 	if mangaID == "" {
-		err := s.DataBase.Select(&volumes, "SELECT * FROM mangaVolumes")
+		err := s.DataBase.Select(&volumes, "SELECT * FROM manga_volumes")
 		return volumes, err
 	}
-	err := s.DataBase.Select(&volumes, "SELECT * FROM mangaVolumes WHERE mangaID = $1", mangaID)
+	err := s.DataBase.Select(&volumes, "SELECT * FROM manga_volumes WHERE manga_id = $1", mangaID)
 	return volumes, err
 }
 
@@ -123,7 +123,7 @@ func (s *MangaStore) CreateVolume(volume *Volume) (*Volume, error) {
 	volume.ID = utils.NewUUID()
 
 	_, err := s.DataBase.Exec(
-		"INSERT INTO mangaVolumes (id, mangaID, number, title, releaseDate, isbn) VALUES ($1, $2, $3, $4, $5, $6)",
+		"INSERT INTO manga_volumes (id, manga_id, number, title, release_date, isbn) VALUES ($1, $2, $3, $4, $5, $6)",
 		volume.ID, volume.MangaID, volume.Number, volume.Title, volume.ReleaseDate, volume.ISBN,
 	)
 	return volume, err

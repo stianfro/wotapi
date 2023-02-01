@@ -2,9 +2,18 @@ services:
   web:
     image: cosmtrek/air
     ports:
-      - "8080:8080"
+      - "8000:8080"
     env_file:
       - .env
     working_dir: /wotapi
     volumes:
-      - .:/wotapi       
+      - .:/wotapi
+  db:
+    image: postgres:14.6
+    ports:
+      - "5001:5432"
+    env_file:
+      - .env
+    volumes:
+      - ./db:/var/lib/postgresql/data
+      - ./hack/init.sql:/docker-entrypoint-initdb.d/init.sql

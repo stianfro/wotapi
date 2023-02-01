@@ -1,0 +1,38 @@
+resources:
+  - ../../base
+
+patchesStrategicMerge:
+  - |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: wotapi
+    spec:
+      template:
+        spec:
+          containers:
+          - name: wotapi
+            env:
+            - name: ENV
+              value: development
+            - name: DB_CONNECTION_STRING
+              value: "postgres://admin:admin@postgresql/wotapi?sslmode=disable"
+            - name: DB_DRIVER
+              value: postgres
+  - |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: postgresql
+    spec:
+      template:
+        spec:
+          containers:
+          - name: postgresql
+            env:
+            - name: POSTGRES_DB
+              value: wotapi
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin

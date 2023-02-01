@@ -4,18 +4,22 @@ CREATE TABLE manga (
   author TEXT NOT NULL,
   magazine TEXT NOT NULL,
   publisher TEXT NOT NULL
-) CREATE TABLE mangaVolumes (
+);
+CREATE TABLE manga_volumes (
   id TEXT PRIMARY KEY,
-  mangaID TEXT NOT NULL,
+  manga_id TEXT NOT NULL,
   number INTEGER NOT NULL,
   title TEXT NOT NULL,
-  releaseDate TEXT NOT NULL,
+  release_date TEXT NOT NULL,
   isbn TEXT NOT NULL,
-  FOREIGN KEY (mangaID) REFERENCES manga(id)
-) CREATE TABLE mangaChapters (
+  FOREIGN KEY (manga_id)
+    REFERENCES manga(id)
+);
+CREATE TABLE manga_chapters (
   id TEXT PRIMARY KEY,
-  volumeID TEXT NOT NULL,
+  volume_id TEXT NOT NULL,
   number INTEGER NOT NULL,
   title TEXT NOT NULL,
-  FOREIGN KEY (volumeID) REFERENCES mangaVolumes(id)
-)
+  FOREIGN KEY (volume_id)
+    REFERENCES manga_volumes(id)
+);
