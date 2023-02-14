@@ -16,6 +16,8 @@ spec:
       containers:
       - name: wotapi
         image: stianfro/wotapi
+        securityContext:
+          allowPrivilegeEscalation: false
         resources:
           requests:
             memory: 32Mi
