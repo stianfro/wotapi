@@ -44,6 +44,7 @@ func main() {
 }
 
 func webserver(handler *v1.HTTPHandler) {
+	fmt.Println("hei hei")
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Recoverer)
